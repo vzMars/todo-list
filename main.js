@@ -1,1 +1,1 @@
-(()=>{"use strict";console.log("hi")})();
+(()=>{"use strict";const e=(e,t,s,o)=>({title:e,description:t,dueDate:s,priority:o}),t=e("Elden Ring","PC","2/25/22","High"),s=e("Monster Hunter Rise","PC","2/22/22","Low"),o=(e=>{const t=[];return{getTitle:()=>e,getTasks:()=>t,addTask:e=>t.push(e),getTaskCount:()=>t.length}})("Video Game Backlog");o.addTask(t),o.addTask(s),console.log(o.getTasks()),console.log(o.getTitle()),console.log(o.getTaskCount())})();
