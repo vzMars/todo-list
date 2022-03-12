@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { createDomElement } from './helper';
 
 export const createTodoList = (project, tabName) => {
@@ -76,8 +77,9 @@ const leftSection = (title, description, complete) => {
 const rightSection = (dueDate, priority, important) => {
   const section = createDomElement('', 'right-section', 'div');
   const column = createDomElement('', 'details-column', 'div');
+  let formattedDate = format(dueDate, 'MM/dd/yyyy');
 
-  column.appendChild(createDomElement(dueDate, 'item-date', 'div'));
+  column.appendChild(createDomElement(formattedDate, 'item-date', 'div'));
   column.appendChild(
     createDomElement(priority, `item-priority ${priority.toLowerCase()}`, 'div')
   );

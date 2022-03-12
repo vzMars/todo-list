@@ -19,6 +19,7 @@ export const renderPage = (
   homeLinks,
   projectLinks
 ) => {
+  content.replaceChildren();
   //   console.log(project);
   //   console.log(tabName);
   //   console.log(tabID);
