@@ -1,18 +1,29 @@
 import Task from './task';
 import Project from './project';
-import { renderPage } from './displaycontroller';
+import { renderPage, hiddenElement } from './displaycontroller';
 
 const projects = [];
+const homeLinks = ['All Tasks', 'Today', 'Next 7 Days', 'Important'];
+
+const content = document.getElementById('content');
+
+content.addEventListener('click', (e) => {
+  const target = e.target;
+  console.log(e);
+  if (target.classList.contains('menu-icon')) {
+    hiddenElement(target.parentElement.nextSibling);
+  }
+});
 
 const createDefaultProject = () => {
   const defaultProject1 = Project('Video Games');
   const defaultProject2 = Project('Movies');
 
-  const task1 = Task('Elden Ring', 'PC', '2022-02-28', 'High', true, true);
+  const task1 = Task('Elden Ring', 'PC', '2022-03-12', 'High', true, true);
   const task2 = Task(
     'Soul Hackers 2',
     'PS5',
-    '2022-08-26',
+    '2022-03-15',
     'Medium',
     false,
     false
@@ -26,9 +37,9 @@ const createDefaultProject = () => {
     false
   );
 
-  const task4 = Task('The Batman', 'Hbo', '2022-03-04', 'High', false, false);
+  const task4 = Task('The Batman', 'Hbo', '2022-03-12', 'High', false, false);
   const task5 = Task('The Flash', 'Vudu', '2022-05-11', 'Low', false, false);
-  const task6 = Task('Alien', 'Netflix', '2022-02-28', 'Medium', false, false);
+  const task6 = Task('Alien', 'Netflix', '2022-03-14', 'Medium', false, false);
 
   defaultProject1.addTask(task1);
   defaultProject1.addTask(task2);
@@ -42,7 +53,7 @@ const createDefaultProject = () => {
   projects.push(defaultProject2);
 };
 
-const createAllTasksArray = (projects) => {
+const allTasks = (projects) => {
   const allTasks = [];
   for (let i = 0; i < projects.length; i++) {
     const project = projects[i].getTasks();
@@ -57,7 +68,20 @@ const init = () => {
   createDefaultProject();
   // createHeader();
   // createProjectContainer(createAllTasksArray(projects), 'All Tasks');
-  renderPage(createAllTasksArray(projects), 'All Tasks');
+  renderPage(
+    allTasks(projects),
+    homeLinks[0],
+    homeLinks[0].toLowerCase().replace(/\s/g, '-'),
+    homeLinks,
+    projects
+  );
+  // renderPage(
+  //   projects[0].getTasks(),
+  //   projects[0].getTitle(),
+  //   projects[0].getID(),
+  //   homeLinks,
+  //   projects
+  // );
 };
 
 export default init;

@@ -1,16 +1,16 @@
 import { createDomElement } from './helper';
 
-export const createTodoList = (project, tab) => {
+export const createTodoList = (project, tabName) => {
   const todoList = createDomElement('', 'todo-list-container', 'div');
 
-  todoList.appendChild(createTodoHeader(tab));
+  todoList.appendChild(createTodoHeader(tabName));
   todoList.appendChild(createTodoListItems(project));
 
   return todoList;
 };
 
-const createTodoHeader = (tab) => {
-  const header = createDomElement(tab, 'todo-list-title', 'div');
+const createTodoHeader = (tabName) => {
+  const header = createDomElement(tabName, 'todo-list-title', 'div');
 
   return header;
 };
@@ -27,6 +27,7 @@ const createTodoListItems = (project) => {
 
 const createItem = (projectItem) => {
   const item = createDomElement('', 'item', 'li');
+  item.id = projectItem.id;
 
   item.appendChild(itemDetails(projectItem));
 
@@ -73,7 +74,6 @@ const leftSection = (title, description, complete) => {
 };
 
 const rightSection = (dueDate, priority, important) => {
-  console.log(important);
   const section = createDomElement('', 'right-section', 'div');
   const column = createDomElement('', 'details-column', 'div');
 
