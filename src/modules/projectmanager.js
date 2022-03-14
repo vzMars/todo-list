@@ -1,7 +1,7 @@
 import Task from './task';
 import Project from './project';
 import { renderPage, hiddenElement } from './displaycontroller';
-import { isToday, parseISO } from 'date-fns';
+import { addDays, isToday, isWithinInterval } from 'date-fns';
 
 const projects = [];
 const homeLinks = ['All Tasks', 'Today', 'Next 7 Days', 'Important'];
@@ -16,37 +16,31 @@ content.addEventListener('click', (e) => {
     hiddenElement(target.parentElement.nextSibling);
   }
   if (target.classList.contains('home-link')) {
-    console.log('hi 1');
     renderHomeLink(target);
-    // console.log(target.id);
-    // console.log(target.parentElement.id);
   } else if (target.parentElement.classList.contains('home-link')) {
-    console.log('hi 2');
     renderHomeLink(target.parentElement);
   }
 });
 
 const renderHomeLink = (target) => {
-  console.log(target.id);
-  // todayTasks(projects);
-  if (target.id === 'all-tasks') {
-    renderPage(
-      allTasks(projects),
-      target.textContent,
-      target.id,
-      homeLinks,
-      projects
-    );
-  } else if (target.id === 'today') {
-    renderPage(
-      todayTasks(projects),
-      target.textContent,
-      target.id,
-      homeLinks,
-      projects
-    );
-  } else if (target.id === 'next-7-days') {
+  renderPage(
+    sortTasks(target.id),
+    target.textContent,
+    target.id,
+    homeLinks,
+    projects
+  );
+};
+
+const sortTasks = (id) => {
+  if (id === 'all-tasks') {
+    return allTasks(projects);
+  } else if (id === 'today') {
+    return todayTasks(projects);
+  } else if (id === 'next-7-days') {
+    return nextSevenDayTasks(projects);
   } else {
+    return importantTasks(projects);
   }
 };
 
@@ -54,11 +48,11 @@ const createDefaultProject = () => {
   const defaultProject1 = Project('Video Games');
   const defaultProject2 = Project('Movies');
 
-  const task1 = Task('Elden Ring', 'PC', '2022-03-12', 'High', true, true);
+  const task1 = Task('Elden Ring', 'PC', '2022-03-13', 'High', true, true);
   const task2 = Task(
     'Soul Hackers 2',
     'PS5',
-    '2022-03-15',
+    '2022-03-18',
     'Medium',
     false,
     false
@@ -66,15 +60,15 @@ const createDefaultProject = () => {
   const task3 = Task(
     'Starfield',
     'Xbox Series X',
-    '2022-11-11',
+    '2022-03-19',
     'Low',
     false,
-    false
+    true
   );
 
-  const task4 = Task('The Batman', 'Hbo', '2022-03-12', 'High', false, false);
+  const task4 = Task('The Batman', 'Hbo', '2022-03-14', 'High', false, false);
   const task5 = Task('The Flash', 'Vudu', '2022-05-11', 'Low', false, false);
-  const task6 = Task('Alien', 'Netflix', '2022-03-14', 'Medium', false, false);
+  const task6 = Task('Alien', 'Netflix', '2022-03-20', 'Medium', false, false);
 
   defaultProject1.addTask(task1);
   defaultProject1.addTask(task2);
@@ -90,17 +84,20 @@ const createDefaultProject = () => {
 
 const allTasks = (projects) => {
   const allTasks = [];
+
   for (let i = 0; i < projects.length; i++) {
     const project = projects[i].getTasks();
     for (let j = 0; j < project.length; j++) {
       allTasks.push(project[j]);
     }
   }
+
   return allTasks;
 };
 
 const todayTasks = (projects) => {
   const todayTasks = [];
+
   for (let i = 0; i < projects.length; i++) {
     const project = projects[i].getTasks();
     for (let j = 0; j < project.length; j++) {
@@ -109,7 +106,44 @@ const todayTasks = (projects) => {
       }
     }
   }
+
   return todayTasks;
+};
+
+const nextSevenDayTasks = (projects) => {
+  const today = new Date();
+  const sevenDays = addDays(today, 7);
+  const nextSevenDayTasks = [];
+
+  for (let i = 0; i < projects.length; i++) {
+    const project = projects[i].getTasks();
+    for (let j = 0; j < project.length; j++) {
+      const sevenDayInterval = isWithinInterval(project[j].dueDate, {
+        start: today,
+        end: sevenDays,
+      });
+      if (sevenDayInterval) {
+        nextSevenDayTasks.push(project[j]);
+      }
+    }
+  }
+
+  return nextSevenDayTasks;
+};
+
+const importantTasks = () => {
+  const importantTasks = [];
+
+  for (let i = 0; i < projects.length; i++) {
+    const project = projects[i].getTasks();
+    for (let j = 0; j < project.length; j++) {
+      if (project[j].important) {
+        importantTasks.push(project[j]);
+      }
+    }
+  }
+
+  return importantTasks;
 };
 
 const init = () => {
