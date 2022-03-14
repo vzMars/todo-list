@@ -12,24 +12,32 @@ content.addEventListener('click', (e) => {
   const target = e.target;
   console.log(e);
   console.log(target);
+
   if (target.classList.contains('menu-icon')) {
     hiddenElement(target.parentElement.nextSibling);
   }
+
   if (target.classList.contains('home-link')) {
-    renderHomeLink(target);
+    renderHomeLink(target.textContent, target.id);
   } else if (target.parentElement.classList.contains('home-link')) {
-    renderHomeLink(target.parentElement);
+    renderHomeLink(target.parentElement.textContent, target.parentElement.id);
+  }
+
+  if (target.classList.contains('project-link')) {
+    renderHomeLink(target.children[1].textContent, target.id);
+  } else if (
+    target.classList.contains('project-link-text') ||
+    target.classList.contains('nav-icon')
+  ) {
+    renderHomeLink(
+      target.parentElement.children[1].textContent,
+      target.parentElement.id
+    );
   }
 });
 
-const renderHomeLink = (target) => {
-  renderPage(
-    sortTasks(target.id),
-    target.textContent,
-    target.id,
-    homeLinks,
-    projects
-  );
+const renderHomeLink = (text, id) => {
+  renderPage(sortTasks(id), text, id, homeLinks, projects);
 };
 
 const sortTasks = (id) => {
@@ -39,8 +47,10 @@ const sortTasks = (id) => {
     return todayTasks(projects);
   } else if (id === 'next-7-days') {
     return nextSevenDayTasks(projects);
-  } else {
+  } else if (id === 'important') {
     return importantTasks(projects);
+  } else {
+    return projectTasks(projects, id);
   }
 };
 
@@ -131,7 +141,7 @@ const nextSevenDayTasks = (projects) => {
   return nextSevenDayTasks;
 };
 
-const importantTasks = () => {
+const importantTasks = (projects) => {
   const importantTasks = [];
 
   for (let i = 0; i < projects.length; i++) {
@@ -144,6 +154,21 @@ const importantTasks = () => {
   }
 
   return importantTasks;
+};
+
+const projectTasks = (projects, id) => {
+  const projectTasks = [];
+
+  for (let i = 0; i < projects.length; i++) {
+    if (projects[i].getID() === id) {
+      const project = projects[i].getTasks();
+      for (let j = 0; j < project.length; j++) {
+        projectTasks.push(project[j]);
+      }
+    }
+  }
+
+  return projectTasks;
 };
 
 const init = () => {
