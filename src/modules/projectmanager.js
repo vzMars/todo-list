@@ -34,6 +34,25 @@ content.addEventListener('click', (e) => {
       target.parentElement.id
     );
   }
+
+  if (target.classList.contains('add-btn')) {
+    if (target.previousSibling.classList.contains('hidden')) {
+      hiddenElement(target.previousSibling);
+    }
+  } else if (target.parentElement.classList.contains('add-btn')) {
+    if (target.parentElement.previousSibling.classList.contains('hidden')) {
+      hiddenElement(target.parentElement.previousSibling);
+    }
+  }
+
+  if (target.id === 'cancel-project-btn') {
+    hiddenElement(target.form);
+  }
+});
+
+content.addEventListener('submit', (e) => {
+  e.preventDefault();
+  console.log('hi');
 });
 
 const renderHomeLink = (text, id) => {

@@ -71,6 +71,7 @@ const createProjectLinks = (projectLinks, tabID) => {
     createDomElement('add', 'material-icons-round add', 'span')
   );
   addBtn.appendChild(createDomElement('Add Project', 'add-btn-text', 'div'));
+  links.appendChild(createForm());
   links.appendChild(addBtn);
 
   return links;
@@ -106,4 +107,40 @@ const createImage = (src) => {
   image.src = src;
 
   return image;
+};
+
+const createForm = () => {
+  const form = createDomElement('', 'add-project-form', 'form');
+  const inputs = createDomElement('', 'form-inputs', 'div');
+  const projectName = createDomElement('', 'project-name-input', 'input');
+  const formBtns = createDomElement('', 'form-btns-input', 'div');
+  const addBtn = createDomElement('Add', 'form-btn', 'input');
+  const cancelBtn = createDomElement('Cancel', 'form-btn', 'input');
+
+  form.classList.add('hidden');
+
+  projectName.placeholder = 'Enter Project Name';
+  projectName.type = 'text';
+
+  addBtn.id = 'add-project-btn';
+  addBtn.type = 'submit';
+  addBtn.value = 'Add';
+
+  cancelBtn.id = 'cancel-project-btn';
+  cancelBtn.type = 'button';
+  cancelBtn.value = 'Cancel';
+
+  formBtns.appendChild(addBtn);
+  formBtns.appendChild(cancelBtn);
+
+  inputs.appendChild(projectName);
+  inputs.appendChild(formBtns);
+
+  form.appendChild(
+    createDomElement('menu', 'material-icons-round nav-icon', 'span')
+  );
+
+  form.appendChild(inputs);
+
+  return form;
 };

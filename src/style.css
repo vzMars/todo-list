@@ -3,6 +3,8 @@
 :root {
   --accent: #bd2a2a;
   --accentDark: #8d1f1f;
+  --greenLight: #2abd67;
+  --greenDark: #1f8d4d;
   --bgColor1: #373c3f;
   --bgColor2: #2f3437;
   --bgColor3: #1a1c1d;
@@ -202,7 +204,8 @@ body {
 
 .home-link,
 .project-link,
-.add-btn {
+.add-btn,
+.add-project-form {
   display: flex;
   align-items: center;
   margin-bottom: 1.2rem;
@@ -222,7 +225,8 @@ body {
 
 .home-link:hover,
 .project-link:hover,
-.add-btn:hover {
+.add-btn:hover,
+.add-project-form:hover {
   background-color: var(--bgColor2);
 }
 
@@ -243,4 +247,57 @@ body {
 
 .hidden {
   display: none;
+}
+
+.add-project-form {
+  cursor: default;
+  align-items: initial;
+}
+
+.form-inputs {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.form-btns-input {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.project-name-input {
+  padding: 0.5em;
+  font-size: 1rem;
+}
+
+.form-btn {
+  cursor: pointer;
+  padding: 0.5em;
+  margin-right: 1rem;
+  width: 20%;
+  color: var(--textColor);
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+#add-project-btn {
+  background-color: var(--greenLight);
+  border: var(--greenLight);
+}
+
+#add-project-btn:hover {
+  background-color: var(--greenDark);
+  border: var(--greenDark);
+}
+
+#cancel-project-btn {
+  background-color: var(--accent);
+  border: var(--accent);
+}
+
+#cancel-project-btn:hover {
+  background-color: var(--accentDark);
+  border: var(--accentDark);
 }
