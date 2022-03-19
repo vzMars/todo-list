@@ -1,11 +1,20 @@
 import { format } from 'date-fns';
-import { createDomElement } from './helper';
+import { createDomElement, createOptionsMenu } from './helper';
 
-export const createTodoList = (project, tabName) => {
+export const createTodoList = (project, tabName, tabID, homeLinks) => {
   const todoList = createDomElement('', 'todo-list-container', 'div');
-
+  todoList.id = tabID;
+  console.log(homeLinks);
   todoList.appendChild(createTodoHeader(tabName));
   todoList.appendChild(createTodoListItems(project));
+  if (!homeLinks.includes(tabName)) {
+    const addTask = createDomElement('', 'add-task', 'div');
+    addTask.appendChild(
+      createDomElement('add', 'material-icons-round add', 'span')
+    );
+    addTask.appendChild(createDomElement('Add Task', 'add-btn-text', 'div'));
+    todoList.appendChild(addTask);
+  }
 
   return todoList;
 };
@@ -27,77 +36,38 @@ const createTodoListItems = (project) => {
 };
 
 const createItem = (projectItem) => {
+  let formattedDate = format(projectItem.dueDate, 'MM/dd/yyyy');
   const item = createDomElement('', 'item', 'li');
   item.id = projectItem.id;
-
-  item.appendChild(itemDetails(projectItem));
-
-  return item;
-};
-
-const itemDetails = (projectItem) => {
-  const details = createDomElement('', 'item-details', 'div');
-  details.appendChild(
-    leftSection(
-      projectItem.title,
-      projectItem.description,
-      projectItem.complete
-    )
-  );
-  details.appendChild(
-    rightSection(
-      projectItem.dueDate,
-      projectItem.priority,
-      projectItem.important
-    )
-  );
-
-  return details;
-};
-
-const leftSection = (title, description, complete) => {
-  const section = createDomElement('', 'left-section', 'div');
-  const column = createDomElement(
-    '',
-    `details-column-${String(complete)}`,
-    'div'
-  );
-
-  column.appendChild(createDomElement(title, 'item-title', 'div'));
-  column.appendChild(createDomElement(description, 'item-description', 'div'));
-
-  section.appendChild(
-    createDomElement('', `item-check-${String(complete)}`, 'div')
-  );
-  section.appendChild(column);
-
-  return section;
-};
-
-const rightSection = (dueDate, priority, important) => {
-  const section = createDomElement('', 'right-section', 'div');
   const column = createDomElement('', 'details-column', 'div');
-  let formattedDate = format(dueDate, 'MM/dd/yyyy');
 
-  column.appendChild(createDomElement(formattedDate, 'item-date', 'div'));
+  if (projectItem.complete === true) {
+    column.classList.add('true');
+  }
+
+  column.appendChild(createDomElement(projectItem.title, 'item-title', 'div'));
   column.appendChild(
-    createDomElement(priority, `item-priority ${priority.toLowerCase()}`, 'div')
+    createDomElement(projectItem.description, 'item-description', 'div')
   );
 
-  section.appendChild(column);
-  if (important) {
-    section.appendChild(
+  item.appendChild(
+    createDomElement('', `item-check-${String(projectItem.complete)}`, 'div')
+  );
+  item.appendChild(column);
+  item.appendChild(createDomElement(formattedDate, 'item-date', 'div'));
+  if (projectItem.important) {
+    item.appendChild(
       createDomElement('star', 'material-icons-round star-true', 'span')
     );
   } else {
-    section.appendChild(
+    item.appendChild(
       createDomElement('star_border', 'material-icons-round star-false', 'span')
     );
   }
-
-  section.appendChild(
+  item.appendChild(
     createDomElement('more_vert', 'material-icons-round more-icon', 'span')
   );
+  item.appendChild(createOptionsMenu('Edit', 'task'));
 
-  return section;
+  return item;
 };

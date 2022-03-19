@@ -1,4 +1,4 @@
-import { createDomElement } from './helper';
+import { createDomElement, createOptionsMenu } from './helper';
 import All from '../images/all.png';
 import Today from '../images/today.png';
 import Week from '../images/7day.png';
@@ -61,18 +61,20 @@ const projectSection = (projectLinks, tabID) => {
 
 const createProjectLinks = (projectLinks, tabID) => {
   const links = createDomElement('', 'project-links', 'div');
-  const addBtn = createDomElement('', 'add-btn', 'div');
+  const addProject = createDomElement('', 'add-project', 'div');
 
   for (let i = 0; i < projectLinks.length; i++) {
     links.appendChild(createProjectLink(projectLinks[i], tabID));
   }
 
-  addBtn.appendChild(
+  addProject.appendChild(
     createDomElement('add', 'material-icons-round add', 'span')
   );
-  addBtn.appendChild(createDomElement('Add Project', 'add-btn-text', 'div'));
-  links.appendChild(createForm());
-  links.appendChild(addBtn);
+  addProject.appendChild(
+    createDomElement('Add Project', 'add-btn-text', 'div')
+  );
+  links.appendChild(createAddRenameForm('Add', ''));
+  links.appendChild(addProject);
 
   return links;
 };
@@ -97,6 +99,7 @@ const createProjectLink = (projectLink, tabID) => {
   link.appendChild(
     createDomElement('more_vert', 'material-icons-round more-icon', 'span')
   );
+  link.appendChild(createOptionsMenu('Rename', 'project'));
 
   return link;
 };
@@ -109,28 +112,38 @@ const createImage = (src) => {
   return image;
 };
 
-const createForm = () => {
-  const form = createDomElement('', 'add-project-form', 'form');
+export const createAddRenameForm = (type, value) => {
+  const form = createDomElement(
+    '',
+    `${type.toLowerCase()}-project-form`,
+    'form'
+  );
   const inputs = createDomElement('', 'form-inputs', 'div');
   const projectName = createDomElement('', 'project-name-input', 'input');
   const formBtns = createDomElement('', 'form-btns-input', 'div');
-  const addBtn = createDomElement('Add', 'form-btn', 'input');
-  const cancelBtn = createDomElement('Cancel', 'form-btn', 'input');
+  const addRenameBtn = createDomElement(type, 'form-btn', 'button');
+  const cancelBtn = createDomElement('Cancel', 'form-btn', 'button');
 
-  form.classList.add('hidden');
+  if (type === 'Add') {
+    form.classList.add('hidden');
+    projectName.placeholder = 'Enter Project Name';
+  }
 
-  projectName.placeholder = 'Enter Project Name';
+  if (value.length > 0) {
+    projectName.value = value;
+  }
+
   projectName.type = 'text';
+  projectName.maxLength = '25';
+  projectName.required = true;
 
-  addBtn.id = 'add-project-btn';
-  addBtn.type = 'submit';
-  addBtn.value = 'Add';
+  addRenameBtn.id = `${type.toLowerCase()}-project-btn`;
+  addRenameBtn.type = 'submit';
 
   cancelBtn.id = 'cancel-project-btn';
   cancelBtn.type = 'button';
-  cancelBtn.value = 'Cancel';
 
-  formBtns.appendChild(addBtn);
+  formBtns.appendChild(addRenameBtn);
   formBtns.appendChild(cancelBtn);
 
   inputs.appendChild(projectName);

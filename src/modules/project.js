@@ -9,9 +9,8 @@ const Project = (title) => {
   const setTitle = (newTitle) => (title = newTitle);
   const addTask = (newTask) => tasks.push(newTask);
   const getTasks = () => tasks;
-  const getTaskCount = () => tasks.length;
 
-  return { getID, getTitle, setTitle, addTask, getTasks, getTaskCount };
+  return { getID, getTitle, setTitle, addTask, getTasks };
 };
 
 export default Project;

@@ -12,6 +12,19 @@ export const hiddenElement = (element) => {
   }
 };
 
+export const hideActiveDropDown = () => {
+  let dropDowns = document.getElementsByClassName('dropdown-menu');
+  for (let i = 0; i < dropDowns.length; i++) {
+    if (!dropDowns[i].classList.contains('hidden')) {
+      hiddenElement(dropDowns[i]);
+    }
+  }
+};
+
+export const getCurrentTab = () => {
+  return document.querySelector('.active-tab');
+};
+
 export const renderPage = (
   project,
   tabName,
@@ -28,5 +41,5 @@ export const renderPage = (
   //   console.log('--------------');
   content.appendChild(createHeader());
   content.appendChild(createNav(homeLinks, projectLinks, tabID));
-  content.appendChild(createTodoList(project, tabName));
+  content.appendChild(createTodoList(project, tabName, tabID, homeLinks));
 };

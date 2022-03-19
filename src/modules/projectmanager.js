@@ -1,7 +1,13 @@
 import Task from './task';
 import Project from './project';
-import { renderPage, hiddenElement } from './displaycontroller';
+import {
+  renderPage,
+  hiddenElement,
+  hideActiveDropDown,
+  getCurrentTab,
+} from './displaycontroller';
 import { addDays, isToday, isWithinInterval } from 'date-fns';
+import { createAddRenameForm } from './nav';
 
 const projects = [];
 const homeLinks = ['All Tasks', 'Today', 'Next 7 Days', 'Important'];
@@ -12,6 +18,17 @@ content.addEventListener('click', (e) => {
   const target = e.target;
   console.log(e);
   console.log(target);
+
+  if (target.classList.contains('more-icon')) {
+    if (target.nextSibling.classList.contains('hidden')) {
+      hideActiveDropDown();
+    }
+    hiddenElement(target.nextSibling);
+  }
+
+  if (!target.matches('.more-icon')) {
+    hideActiveDropDown();
+  }
 
   if (target.classList.contains('menu-icon')) {
     hiddenElement(target.parentElement.nextSibling);
@@ -35,24 +52,80 @@ content.addEventListener('click', (e) => {
     );
   }
 
-  if (target.classList.contains('add-btn')) {
-    if (target.previousSibling.classList.contains('hidden')) {
-      hiddenElement(target.previousSibling);
-    }
-  } else if (target.parentElement.classList.contains('add-btn')) {
-    if (target.parentElement.previousSibling.classList.contains('hidden')) {
-      hiddenElement(target.parentElement.previousSibling);
+  if (
+    target.classList.contains('add-project') ||
+    target.parentElement.classList.contains('add-project')
+  ) {
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+    let form = e.path[6].querySelector('.add-project-form');
+
+    if (form.classList.contains('hidden')) {
+      hiddenElement(form);
     }
   }
 
   if (target.id === 'cancel-project-btn') {
-    hiddenElement(target.form);
+    if (e.path[3].classList.contains('add-project-form')) {
+      hiddenElement(target.form);
+      target.form[0].value = '';
+    } else if (e.path[3].classList.contains('rename-project-form')) {
+      let currentTab = getCurrentTab();
+      let text;
+
+      if (currentTab.classList.contains('rename-project-form')) {
+        text = currentTab.children[1].firstChild.value;
+      } else {
+        text = currentTab.children[1].textContent;
+      }
+
+      renderHomeLink(text, currentTab.id);
+    }
+  }
+
+  if (target.id === 'project-rename') {
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+
+    let id = e.path[2].id;
+    let text = e.path[2].children[1].textContent;
+    let project = e.path[6].querySelector(`[id='${id}']`);
+
+    const form = createAddRenameForm('Rename', text);
+
+    if (project.classList.contains('active-tab')) {
+      form.classList.add('active-tab');
+    }
+    form.id = id;
+    project.replaceWith(form);
+  }
+
+  if (target.id === 'project-delete') {
+    console.log('time to delete');
   }
 });
 
 content.addEventListener('submit', (e) => {
   e.preventDefault();
-  console.log('hi');
+  const target = e.target;
+  console.log(e);
+  if (target.classList.contains('add-project-form')) {
+    createProject(target[0].value);
+    target[0].value = '';
+    hiddenElement(e.path[0]);
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+  }
+
+  if (target.classList.contains('rename-project-form')) {
+    const index = projects.findIndex(
+      (project) => project.getID() === target.id
+    );
+
+    projects[index].setTitle(target[0].value);
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+  }
 });
 
 const renderHomeLink = (text, id) => {
@@ -73,31 +146,22 @@ const sortTasks = (id) => {
   }
 };
 
+const createProject = (title) => {
+  const newProject = Project(title);
+  projects.push(newProject);
+};
+
 const createDefaultProject = () => {
   const defaultProject1 = Project('Video Games');
   const defaultProject2 = Project('Movies');
 
-  const task1 = Task('Elden Ring', 'PC', '2022-03-13', 'High', true, true);
-  const task2 = Task(
-    'Soul Hackers 2',
-    'PS5',
-    '2022-03-18',
-    'Medium',
-    false,
-    false
-  );
-  const task3 = Task(
-    'Starfield',
-    'Xbox Series X',
-    '2022-03-19',
-    'Low',
-    false,
-    true
-  );
+  const task1 = Task('Elden Ring', 'PC', '2022-03-13', true, true);
+  const task2 = Task('Soul Hackers 2', 'PS5', '2022-03-18', false, false);
+  const task3 = Task('Starfield', 'Xbox Series X', '2022-03-19', false, true);
 
-  const task4 = Task('The Batman', 'Hbo', '2022-03-14', 'High', false, false);
-  const task5 = Task('The Flash', 'Vudu', '2022-05-11', 'Low', false, false);
-  const task6 = Task('Alien', 'Netflix', '2022-03-20', 'Medium', false, false);
+  const task4 = Task('The Batman', 'Hbo', '2022-03-14', false, false);
+  const task5 = Task('The Flash', 'Vudu', '2022-05-11', false, false);
+  const task6 = Task('Alien', 'Netflix', '2022-03-20', false, false);
 
   defaultProject1.addTask(task1);
   defaultProject1.addTask(task2);
