@@ -102,6 +102,32 @@ content.addEventListener('click', (e) => {
 
   if (target.id === 'project-delete') {
     console.log('time to delete');
+    let projectID = e.path[2].id;
+    const index = projects.findIndex((project) => project.id === projectID);
+    console.log(index);
+    let removed = projects.splice(index, 1);
+    console.log(removed);
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+  }
+
+  if (
+    target.className === 'item-check-true' ||
+    target.className === 'item-check-false'
+  ) {
+    let taskID = e.path[1].id;
+    const indexs = indexOfTask(taskID);
+
+    console.log(indexs);
+
+    if (projects[indexs[0]].tasks[indexs[1]].complete === true) {
+      projects[indexs[0]].tasks[indexs[1]].complete = false;
+    } else {
+      projects[indexs[0]].tasks[indexs[1]].complete = true;
+    }
+
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
 });
 
@@ -118,15 +144,25 @@ content.addEventListener('submit', (e) => {
   }
 
   if (target.classList.contains('rename-project-form')) {
-    const index = projects.findIndex(
-      (project) => project.getID() === target.id
-    );
+    const index = projects.findIndex((project) => project.id === target.id);
 
     projects[index].setTitle(target[0].value);
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
 });
+
+const indexOfTask = (id) => {
+  const projectIndex = projects.findIndex((project) =>
+    project.tasks.find((task) => task.id === id)
+  );
+
+  const taskIndex = projects[projectIndex].tasks.findIndex(
+    (task) => task.id === id
+  );
+
+  return [projectIndex, taskIndex];
+};
 
 const renderHomeLink = (text, id) => {
   renderPage(sortTasks(id), text, id, homeLinks, projects);
@@ -179,7 +215,7 @@ const allTasks = (projects) => {
   const allTasks = [];
 
   for (let i = 0; i < projects.length; i++) {
-    const project = projects[i].getTasks();
+    const project = projects[i].tasks;
     for (let j = 0; j < project.length; j++) {
       allTasks.push(project[j]);
     }
@@ -192,7 +228,7 @@ const todayTasks = (projects) => {
   const todayTasks = [];
 
   for (let i = 0; i < projects.length; i++) {
-    const project = projects[i].getTasks();
+    const project = projects[i].tasks;
     for (let j = 0; j < project.length; j++) {
       if (isToday(project[j].dueDate)) {
         todayTasks.push(project[j]);
@@ -209,7 +245,7 @@ const nextSevenDayTasks = (projects) => {
   const nextSevenDayTasks = [];
 
   for (let i = 0; i < projects.length; i++) {
-    const project = projects[i].getTasks();
+    const project = projects[i].tasks;
     for (let j = 0; j < project.length; j++) {
       const sevenDayInterval = isWithinInterval(project[j].dueDate, {
         start: today,
@@ -228,7 +264,7 @@ const importantTasks = (projects) => {
   const importantTasks = [];
 
   for (let i = 0; i < projects.length; i++) {
-    const project = projects[i].getTasks();
+    const project = projects[i].tasks;
     for (let j = 0; j < project.length; j++) {
       if (project[j].important) {
         importantTasks.push(project[j]);
@@ -243,8 +279,8 @@ const projectTasks = (projects, id) => {
   const projectTasks = [];
 
   for (let i = 0; i < projects.length; i++) {
-    if (projects[i].getID() === id) {
-      const project = projects[i].getTasks();
+    if (projects[i].id === id) {
+      const project = projects[i].tasks;
       for (let j = 0; j < project.length; j++) {
         projectTasks.push(project[j]);
       }
@@ -265,13 +301,6 @@ const init = () => {
     homeLinks,
     projects
   );
-  // renderPage(
-  //   projects[0].getTasks(),
-  //   projects[0].getTitle(),
-  //   projects[0].getID(),
-  //   homeLinks,
-  //   projects
-  // );
 };
 
 export default init;

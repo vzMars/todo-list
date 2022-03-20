@@ -82,13 +82,13 @@ const createProjectLinks = (projectLinks, tabID) => {
 const createProjectLink = (projectLink, tabID) => {
   const link = createDomElement('', 'project-link', 'div');
   const linkText = createDomElement(
-    projectLink.getTitle(),
+    projectLink.title,
     'project-link-text',
     'div'
   );
-  link.id = projectLink.getID();
+  link.id = projectLink.id;
 
-  if (projectLink.getID() === tabID) {
+  if (projectLink.id === tabID) {
     link.classList.add('active-tab');
   }
 
