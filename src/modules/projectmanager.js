@@ -6,70 +6,83 @@ import {
   hideActiveDropDown,
   getCurrentTab,
 } from './displaycontroller';
-import { addDays, isToday, isWithinInterval } from 'date-fns';
-import { createAddRenameForm } from './nav';
+import { projectForm } from './nav';
+import { taskForm } from './todolist';
+import { addDays, isToday, isWithinInterval, parseISO } from 'date-fns';
 
 const projects = [];
 const homeLinks = ['All Tasks', 'Today', 'Next 7 Days', 'Important'];
 
 const content = document.getElementById('content');
+const header = document.querySelector('.header-section');
+const nav = document.querySelector('.nav-section');
+const todoList = document.querySelector('.todo-list-container');
 
-content.addEventListener('click', (e) => {
+header.addEventListener('click', (e) => {
   const target = e.target;
-  console.log(e);
-  console.log(target);
-
-  if (target.classList.contains('more-icon')) {
-    if (target.nextSibling.classList.contains('hidden')) {
-      hideActiveDropDown();
-    }
-    hiddenElement(target.nextSibling);
-  }
-
-  if (!target.matches('.more-icon')) {
-    hideActiveDropDown();
-  }
 
   if (target.classList.contains('menu-icon')) {
-    hiddenElement(target.parentElement.nextSibling);
+    hiddenElement(target.parentElement.nextElementSibling);
   }
+});
+
+nav.addEventListener('click', (e) => {
+  const target = e.target;
 
   if (target.classList.contains('home-link')) {
     renderHomeLink(target.textContent, target.id);
-  } else if (target.parentElement.classList.contains('home-link')) {
-    renderHomeLink(target.parentElement.textContent, target.parentElement.id);
   }
 
   if (target.classList.contains('project-link')) {
     renderHomeLink(target.children[1].textContent, target.id);
-  } else if (
-    target.classList.contains('project-link-text') ||
-    target.classList.contains('nav-icon')
-  ) {
-    renderHomeLink(
-      target.parentElement.children[1].textContent,
-      target.parentElement.id
-    );
   }
 
-  if (
-    target.classList.contains('add-project') ||
-    target.parentElement.classList.contains('add-project')
-  ) {
+  if (target.classList.contains('add-project')) {
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
-    let form = e.path[6].querySelector('.add-project-form');
+    let form = e.path[3].querySelector('.add-project-form');
 
     if (form.classList.contains('hidden')) {
       hiddenElement(form);
     }
   }
 
+  if (target.id === 'project-rename') {
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+
+    let id = e.path[2].id;
+    let text = e.path[2].children[1].textContent;
+    let project = e.path[5].querySelector(`[id='${id}']`);
+
+    const form = projectForm('Rename', text);
+
+    if (project.classList.contains('active-tab')) {
+      form.classList.add('active-tab');
+    }
+    form.id = id;
+    project.replaceWith(form);
+  }
+
+  if (target.id === 'project-delete') {
+    let projectID = e.path[2].id;
+    const index = projects.findIndex((project) => project.id === projectID);
+    projects.splice(index, 1);
+
+    let currentTab = getCurrentTab();
+    if (currentTab.id === projectID) {
+      renderHomeLink(
+        homeLinks[0],
+        homeLinks[0].toLowerCase().replace(/\s/g, '-')
+      );
+    } else {
+      renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+    }
+  }
+
   if (target.id === 'cancel-project-btn') {
-    if (e.path[3].classList.contains('add-project-form')) {
-      hiddenElement(target.form);
-      target.form[0].value = '';
-    } else if (e.path[3].classList.contains('rename-project-form')) {
+    hiddenElement(target.form);
+    if (e.path[3].classList.contains('rename-project-form')) {
       let currentTab = getCurrentTab();
       let text;
 
@@ -82,63 +95,102 @@ content.addEventListener('click', (e) => {
       renderHomeLink(text, currentTab.id);
     }
   }
+});
 
-  if (target.id === 'project-rename') {
-    let currentTab = getCurrentTab();
-    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+todoList.addEventListener('click', (e) => {
+  const target = e.target;
 
-    let id = e.path[2].id;
-    let text = e.path[2].children[1].textContent;
-    let project = e.path[6].querySelector(`[id='${id}']`);
-
-    const form = createAddRenameForm('Rename', text);
-
-    if (project.classList.contains('active-tab')) {
-      form.classList.add('active-tab');
-    }
-    form.id = id;
-    project.replaceWith(form);
-  }
-
-  if (target.id === 'project-delete') {
-    console.log('time to delete');
-    let projectID = e.path[2].id;
-    const index = projects.findIndex((project) => project.id === projectID);
-    console.log(index);
-    let removed = projects.splice(index, 1);
-    console.log(removed);
-    let currentTab = getCurrentTab();
-    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
-  }
-
-  if (
-    target.className === 'item-check-true' ||
-    target.className === 'item-check-false'
-  ) {
+  if (target.classList.contains('item-check')) {
     let taskID = e.path[1].id;
-    const indexs = indexOfTask(taskID);
+    const indices = indexOfTask(taskID);
+    let completeStatus = projects[indices[0]].tasks[indices[1]].complete;
 
-    console.log(indexs);
-
-    if (projects[indexs[0]].tasks[indexs[1]].complete === true) {
-      projects[indexs[0]].tasks[indexs[1]].complete = false;
-    } else {
-      projects[indexs[0]].tasks[indexs[1]].complete = true;
-    }
+    projects[indices[0]].tasks[indices[1]].complete = !completeStatus;
 
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+  }
+
+  if (target.classList.contains('star')) {
+    let taskID = e.path[1].id;
+    const indices = indexOfTask(taskID);
+    let importantStatus = projects[indices[0]].tasks[indices[1]].important;
+
+    projects[indices[0]].tasks[indices[1]].important = !importantStatus;
+
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+  }
+
+  if (target.id === 'task-edit') {
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+
+    const formValues = [];
+    let id = e.path[2].id;
+    let title = e.path[2].children[1].children[0].textContent;
+    let description = e.path[2].children[1].children[1].textContent;
+    let dueDate = e.path[2].children[2].textContent;
+    let task = e.path[6].querySelector(`[id='${id}']`);
+
+    formValues.push(title);
+    formValues.push(description);
+    formValues.push(dueDate);
+    const form = taskForm('Edit', formValues);
+
+    form.id = id;
+    task.replaceWith(form);
+  }
+
+  if (target.classList.contains('add-task')) {
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+
+    let form = e.path[2].querySelector('.add-task-form');
+
+    if (form.classList.contains('hidden')) {
+      hiddenElement(form);
+    }
+  }
+
+  if (target.id === 'task-delete') {
+    let taskID = e.path[2].id;
+    const indices = indexOfTask(taskID);
+
+    projects[indices[0]].tasks.splice(indices[1], 1);
+
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+  }
+
+  if (target.id === 'cancel-task-btn') {
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+  }
+});
+
+content.addEventListener('click', (e) => {
+  const target = e.target;
+
+  if (target.classList.contains('more-icon')) {
+    if (target.nextSibling.classList.contains('hidden')) {
+      hideActiveDropDown();
+    }
+    hiddenElement(target.nextSibling);
+  }
+
+  if (!target.matches('.more-icon')) {
+    hideActiveDropDown();
   }
 });
 
 content.addEventListener('submit', (e) => {
   e.preventDefault();
   const target = e.target;
-  console.log(e);
+
   if (target.classList.contains('add-project-form')) {
     createProject(target[0].value);
-    target[0].value = '';
-    hiddenElement(e.path[0]);
+
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
@@ -146,7 +198,34 @@ content.addEventListener('submit', (e) => {
   if (target.classList.contains('rename-project-form')) {
     const index = projects.findIndex((project) => project.id === target.id);
 
-    projects[index].setTitle(target[0].value);
+    projects[index].title = target[0].value;
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+  }
+
+  if (target.classList.contains('add-task-form')) {
+    let projectID = e.path[1].id;
+    const taskInfo = [
+      target[0].value,
+      target[1].value,
+      target[2].value,
+      false,
+      false,
+    ];
+    createTask(taskInfo, projectID);
+
+    let currentTab = getCurrentTab();
+    renderHomeLink(currentTab.children[1].textContent, currentTab.id);
+  }
+
+  if (target.classList.contains('edit-task-form')) {
+    let taskID = target.id;
+    const indices = indexOfTask(taskID);
+
+    projects[indices[0]].tasks[indices[1]].title = target[0].value;
+    projects[indices[0]].tasks[indices[1]].description = target[1].value;
+    projects[indices[0]].tasks[indices[1]].dueDate = parseISO(target[2].value);
+
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
@@ -187,28 +266,31 @@ const createProject = (title) => {
   projects.push(newProject);
 };
 
+const createTask = (taskInfo, projectID) => {
+  const newTask = Task(
+    taskInfo[0],
+    taskInfo[1],
+    taskInfo[2],
+    taskInfo[3],
+    taskInfo[4]
+  );
+  const projectIndex = projects.findIndex(
+    (project) => project.id === projectID
+  );
+  projects[projectIndex].addTask(newTask);
+};
+
 const createDefaultProject = () => {
-  const defaultProject1 = Project('Video Games');
-  const defaultProject2 = Project('Movies');
-
-  const task1 = Task('Elden Ring', 'PC', '2022-03-13', true, true);
-  const task2 = Task('Soul Hackers 2', 'PS5', '2022-03-18', false, false);
-  const task3 = Task('Starfield', 'Xbox Series X', '2022-03-19', false, true);
-
-  const task4 = Task('The Batman', 'Hbo', '2022-03-14', false, false);
-  const task5 = Task('The Flash', 'Vudu', '2022-05-11', false, false);
-  const task6 = Task('Alien', 'Netflix', '2022-03-20', false, false);
-
-  defaultProject1.addTask(task1);
-  defaultProject1.addTask(task2);
-  defaultProject1.addTask(task3);
-
-  defaultProject2.addTask(task4);
-  defaultProject2.addTask(task5);
-  defaultProject2.addTask(task6);
-
-  projects.push(defaultProject1);
-  projects.push(defaultProject2);
+  createProject('Video Games');
+  createTask(['Elden Ring', 'PC', '2022-02-25', false, false], projects[0].id);
+  createTask(
+    ['Soul Hackers 2', 'PS5', '2022-08-25', false, false],
+    projects[0].id
+  );
+  createTask(
+    ['Starfield', 'Xbox Series X', '2022-11-11', false, false],
+    projects[0].id
+  );
 };
 
 const allTasks = (projects) => {
@@ -292,8 +374,6 @@ const projectTasks = (projects, id) => {
 
 const init = () => {
   createDefaultProject();
-  // createHeader();
-  // createProjectContainer(createAllTasksArray(projects), 'All Tasks');
   renderPage(
     allTasks(projects),
     homeLinks[0],

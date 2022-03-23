@@ -51,8 +51,7 @@ body {
 }
 
 .menu-icon,
-.star-true,
-.star-false,
+.star,
 .more-icon {
   transform: scale(1);
 }
@@ -98,7 +97,7 @@ body {
 
 .item,
 .add-task {
-  height: 5rem;
+  min-height: 5rem;
   background-color: var(--bgColor3);
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.4);
   list-style-type: none;
@@ -106,16 +105,13 @@ body {
   margin-bottom: 1rem;
   padding: 0 0.2rem;
   border-radius: 5px;
-  word-break: break-all;
-  white-space: pre-wrap;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 1rem;
 }
 
-.item-check-false,
-.item-check-true {
+.item-check {
   width: 100%;
   max-width: 1.3rem;
   min-height: 1.3rem;
@@ -125,7 +121,7 @@ body {
   margin-right: 0.5rem;
 }
 
-.item-check-true {
+.check-true {
   background-image: url(./images/logo.png);
   background-size: 100%;
   background-repeat: no-repeat;
@@ -134,12 +130,18 @@ body {
   border: solid 2px var(--accent);
 }
 
-.true {
+.text-true {
   text-decoration: line-through var(--accent) 2px;
 }
 
 .details-column {
   flex: 1;
+  min-width: 5rem;
+}
+
+.item-description {
+  color: #e9e9e9;
+  font-size: 0.7rem;
 }
 
 .item-date {
@@ -150,10 +152,10 @@ body {
   justify-content: center;
   border-radius: 5px;
   font-size: 0.75rem;
+  margin-left: 0.2rem;
 }
 
-.star-true,
-.star-false,
+.star,
 .item .more-icon {
   border-radius: 5px;
   cursor: pointer;
@@ -186,7 +188,9 @@ body {
 .project-link,
 .add-project,
 .add-project-form,
-.rename-project-form {
+.rename-project-form,
+.add-task-form,
+.edit-task-form {
   display: flex;
   align-items: center;
   margin-bottom: 1.2rem;
@@ -196,8 +200,8 @@ body {
 }
 
 .project-link-text {
-  display: flex;
   flex: 1;
+  min-width: 10rem;
 }
 
 .project-link .more-icon {
@@ -208,9 +212,7 @@ body {
 .project-link:hover,
 .add-project:hover,
 .add-project-form:hover,
-.rename-project-form:hover,
-.item .star-false:hover,
-.item .more-icon:hover {
+.rename-project-form:hover {
   background-color: var(--bgColor2);
 }
 
@@ -247,7 +249,8 @@ body {
   margin-top: 1rem;
 }
 
-.project-name-input {
+.project-name-input,
+.task-input {
   padding: 0.5em;
   font-size: 1rem;
 }
@@ -269,12 +272,15 @@ body {
 }
 
 #add-project-btn,
-#rename-project-btn {
+#rename-project-btn,
+#add-task-btn,
+#edit-task-btn {
   background-color: var(--greenLight);
   border: var(--greenLight);
 }
 
-#cancel-project-btn {
+#cancel-project-btn,
+#cancel-task-btn {
   background-color: var(--accent);
   border: var(--accent);
 }
@@ -313,7 +319,6 @@ body {
 
 .hidden {
   display: none;
-  transition: display 150ms ease-in-out;
 }
 
 .add-task {
@@ -323,6 +328,27 @@ body {
 }
 
 .add-task .add,
-.add-task .add-btn-text {
+.add-task .add-btn-text,
+.home-link-img,
+.home-link-text,
+.nav-icon,
+.project-link-text,
+.add,
+.add-btn-text {
   pointer-events: none;
+}
+
+.add-task-form,
+.edit-task-form {
+  background-color: var(--bgColor3);
+  padding: 1.5rem;
+}
+
+.input-label,
+.task-input {
+  margin-bottom: 0.5rem;
+}
+
+#task-duedate-input {
+  margin-bottom: 0;
 }

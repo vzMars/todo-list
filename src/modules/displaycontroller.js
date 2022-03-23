@@ -2,7 +2,13 @@ import { createHeader } from './header';
 import { createNav } from './nav';
 import { createTodoList } from './todolist';
 
-const content = document.getElementById('content');
+// const content = document.getElementById('content');
+const header = document.querySelector('.header-section');
+const nav = document.querySelector('.nav-section');
+const todoList = document.querySelector('.todo-list-container');
+// console.log(header);
+// console.log(nav);
+// console.log(todoList);
 
 export const hiddenElement = (element) => {
   if (element.classList.contains('hidden')) {
@@ -32,14 +38,8 @@ export const renderPage = (
   homeLinks,
   projectLinks
 ) => {
-  content.replaceChildren();
-  //   console.log(project);
-  //   console.log(tabName);
-  //   console.log(tabID);
-  //   console.log(homeLinks);
-  //   console.log(projectLinks);
-  //   console.log('--------------');
-  content.appendChild(createHeader());
-  content.appendChild(createNav(homeLinks, projectLinks, tabID));
-  content.appendChild(createTodoList(project, tabName, tabID, homeLinks));
+  header.replaceChildren(createHeader());
+  nav.replaceChildren(createNav(homeLinks, projectLinks, tabID));
+  todoList.id = tabID;
+  todoList.replaceChildren(createTodoList(project, tabName, homeLinks));
 };

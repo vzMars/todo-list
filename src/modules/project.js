@@ -4,10 +4,9 @@ const Project = (title) => {
   const tasks = [];
   const id = uuidv4();
 
-  const setTitle = (newTitle) => (title = newTitle);
   const addTask = (newTask) => tasks.push(newTask);
 
-  return { id, title, tasks, setTitle, addTask };
+  return { id, title, tasks, addTask };
 };
 
 export default Project;

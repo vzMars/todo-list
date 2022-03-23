@@ -7,12 +7,12 @@ import Star from '../images/star.png';
 const imgs = [All, Today, Week, Star];
 
 export const createNav = (homeLinks, projectLinks, tabID) => {
-  const nav = createDomElement('', 'nav-section', 'nav');
+  let fragment = document.createDocumentFragment();
 
-  nav.appendChild(homeSection(homeLinks, tabID));
-  nav.appendChild(projectSection(projectLinks, tabID));
+  fragment.appendChild(homeSection(homeLinks, tabID));
+  fragment.appendChild(projectSection(projectLinks, tabID));
 
-  return nav;
+  return fragment;
 };
 
 const homeSection = (homeLinks, tabID) => {
@@ -73,7 +73,7 @@ const createProjectLinks = (projectLinks, tabID) => {
   addProject.appendChild(
     createDomElement('Add Project', 'add-btn-text', 'div')
   );
-  links.appendChild(createAddRenameForm('Add', ''));
+  links.appendChild(projectForm('Add', ''));
   links.appendChild(addProject);
 
   return links;
@@ -112,7 +112,7 @@ const createImage = (src) => {
   return image;
 };
 
-export const createAddRenameForm = (type, value) => {
+export const projectForm = (type, value) => {
   const form = createDomElement(
     '',
     `${type.toLowerCase()}-project-form`,

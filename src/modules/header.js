@@ -2,15 +2,15 @@ import { createDomElement } from './helper';
 import Logo from '../images/logo.png';
 
 export const createHeader = () => {
-  const header = createDomElement('', 'header-section', 'header');
+  let fragment = document.createDocumentFragment();
 
-  header.appendChild(
+  fragment.appendChild(
     createDomElement('menu', 'material-icons-round menu-icon', 'span')
   );
 
-  header.appendChild(createLogoSection());
+  fragment.appendChild(createLogoSection());
 
-  return header;
+  return fragment;
 };
 
 const createLogoSection = () => {
