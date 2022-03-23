@@ -1,9 +1,6 @@
-import { format, parseISO } from 'date-fns';
-import { v4 as uuidv4 } from 'uuid';
+import { parseISO } from 'date-fns';
 
-const Task = (title, description, dueDate, complete, important) => {
-  const id = uuidv4();
-
+const Task = (id, title, description, dueDate, complete, important) => {
   dueDate = parseISO(dueDate);
   return { id, title, description, dueDate, complete, important };
 };

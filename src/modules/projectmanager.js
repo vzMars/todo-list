@@ -9,6 +9,7 @@ import {
 import { projectForm } from './nav';
 import { taskForm } from './todolist';
 import { addDays, isToday, isWithinInterval, parseISO } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
 
 const projects = [];
 const homeLinks = ['All Tasks', 'Today', 'Next 7 Days', 'Important'];
@@ -69,6 +70,7 @@ nav.addEventListener('click', (e) => {
     const index = projects.findIndex((project) => project.id === projectID);
     projects.splice(index, 1);
 
+    addProjectsToStorage();
     let currentTab = getCurrentTab();
     if (currentTab.id === projectID) {
       renderHomeLink(
@@ -107,6 +109,7 @@ todoList.addEventListener('click', (e) => {
 
     projects[indices[0]].tasks[indices[1]].complete = !completeStatus;
 
+    addProjectsToStorage();
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
@@ -118,6 +121,7 @@ todoList.addEventListener('click', (e) => {
 
     projects[indices[0]].tasks[indices[1]].important = !importantStatus;
 
+    addProjectsToStorage();
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
@@ -159,6 +163,7 @@ todoList.addEventListener('click', (e) => {
 
     projects[indices[0]].tasks.splice(indices[1], 1);
 
+    addProjectsToStorage();
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
@@ -191,6 +196,7 @@ content.addEventListener('submit', (e) => {
   if (target.classList.contains('add-project-form')) {
     createProject(target[0].value);
 
+    addProjectsToStorage();
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
@@ -199,6 +205,8 @@ content.addEventListener('submit', (e) => {
     const index = projects.findIndex((project) => project.id === target.id);
 
     projects[index].title = target[0].value;
+
+    addProjectsToStorage();
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
@@ -214,6 +222,7 @@ content.addEventListener('submit', (e) => {
     ];
     createTask(taskInfo, projectID);
 
+    addProjectsToStorage();
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
@@ -226,10 +235,52 @@ content.addEventListener('submit', (e) => {
     projects[indices[0]].tasks[indices[1]].description = target[1].value;
     projects[indices[0]].tasks[indices[1]].dueDate = parseISO(target[2].value);
 
+    addProjectsToStorage();
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
   }
 });
+
+const checkStorage = () => {
+  if (!localStorage.getItem('myProjects')) {
+    createDefaultProject();
+    addProjectsToStorage();
+  } else {
+    getProjectsFromStorage();
+  }
+};
+
+const addProjectsToStorage = () => {
+  localStorage['myProjects'] = JSON.stringify(projects);
+  clearProjects();
+  getProjectsFromStorage();
+};
+
+const getProjectsFromStorage = () => {
+  let tempProjects = JSON.parse(localStorage['myProjects']);
+  console.log(tempProjects);
+  for (let i = 0; i < tempProjects.length; i++) {
+    const tasks = tempProjects[i].tasks;
+    createProject(tempProjects[i].title, tempProjects[i].id);
+    for (let j = 0; j < tasks.length; j++) {
+      createTask(
+        [
+          tasks[j].title,
+          tasks[j].description,
+          tasks[j].dueDate,
+          tasks[j].complete,
+          tasks[j].important,
+        ],
+        tempProjects[i].id,
+        tasks[j].id
+      );
+    }
+  }
+};
+
+const clearProjects = () => {
+  projects.length = 0;
+};
 
 const indexOfTask = (id) => {
   const projectIndex = projects.findIndex((project) =>
@@ -261,13 +312,18 @@ const sortTasks = (id) => {
   }
 };
 
-const createProject = (title) => {
-  const newProject = Project(title);
+const createProject = (title, projectID) => {
+  const id = createID(projectID);
+  console.log(id);
+  const newProject = Project(id, title);
   projects.push(newProject);
 };
 
-const createTask = (taskInfo, projectID) => {
+const createTask = (taskInfo, projectID, taskID) => {
+  const id = createID(taskID);
+  console.log(id);
   const newTask = Task(
+    id,
     taskInfo[0],
     taskInfo[1],
     taskInfo[2],
@@ -280,8 +336,20 @@ const createTask = (taskInfo, projectID) => {
   projects[projectIndex].addTask(newTask);
 };
 
+const createID = (itemID) => {
+  let id;
+  if (itemID !== undefined) {
+    id = itemID;
+  } else {
+    id = uuidv4();
+  }
+  return id;
+};
+
 const createDefaultProject = () => {
   createProject('Video Games');
+  createProject('Movies');
+
   createTask(['Elden Ring', 'PC', '2022-02-25', false, false], projects[0].id);
   createTask(
     ['Soul Hackers 2', 'PS5', '2022-08-25', false, false],
@@ -290,6 +358,10 @@ const createDefaultProject = () => {
   createTask(
     ['Starfield', 'Xbox Series X', '2022-11-11', false, false],
     projects[0].id
+  );
+  createTask(
+    ['The Batman', 'HBO Max', '2022-03-04', false, false],
+    projects[1].id
   );
 };
 
@@ -373,7 +445,8 @@ const projectTasks = (projects, id) => {
 };
 
 const init = () => {
-  createDefaultProject();
+  // createDefaultProject();
+  checkStorage();
   renderPage(
     allTasks(projects),
     homeLinks[0],
