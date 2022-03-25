@@ -1,5 +1,7 @@
 # todo-list
 
+<img src = "./src/images/home.png">
+
 ### Features:
 
 - Create new projects/tasks
@@ -22,5 +24,3 @@
 
 - date-fns
 - uu
-
-<img src = "./src/images/home.png">
