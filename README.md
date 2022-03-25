@@ -1,6 +1,6 @@
 # todo-list
 
-## Features:
+### Features:
 
 - Create new projects/tasks
 - Edit project's title
@@ -11,16 +11,16 @@
 - Sort tasks by date (daily or weekly)
 - Sort tasks by important status
 
-## Built With:
+### Built With:
 
 - HTML
 - CSS
 - Javascript
 - Webpack
 
-## Libraries Used:
+### Libraries Used:
 
 - date-fns
-- uuid
+- uu
 
-<img src = "./src/images/home.png>
+<img src = "./src/images/home.png">
