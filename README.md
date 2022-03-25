@@ -12,6 +12,8 @@
 - Mark tasks as important/unimportant
 - Sort tasks by date (daily or weekly)
 - Sort tasks by important status
+- Mobile Responsive
+- Data is saved to localStorage
 
 ### Built With:
 
