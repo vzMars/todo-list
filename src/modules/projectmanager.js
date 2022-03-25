@@ -30,6 +30,7 @@ header.addEventListener('click', (e) => {
 
 nav.addEventListener('click', (e) => {
   const target = e.target;
+  let path = e.path || e.composedPath();
 
   if (target.classList.contains('home-link')) {
     renderHomeLink(target.textContent, target.id);
@@ -42,7 +43,7 @@ nav.addEventListener('click', (e) => {
   if (target.classList.contains('add-project')) {
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
-    let form = e.path[3].querySelector('.add-project-form');
+    let form = path[3].querySelector('.add-project-form');
 
     if (form.classList.contains('hidden')) {
       hiddenElement(form);
@@ -53,9 +54,9 @@ nav.addEventListener('click', (e) => {
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
 
-    let id = e.path[2].id;
-    let text = e.path[2].children[1].textContent;
-    let project = e.path[5].querySelector(`[id='${id}']`);
+    let id = path[2].id;
+    let text = path[2].children[1].textContent;
+    let project = path[5].querySelector(`[id='${id}']`);
 
     const form = projectForm('Rename', text);
 
@@ -67,7 +68,7 @@ nav.addEventListener('click', (e) => {
   }
 
   if (target.id === 'project-delete') {
-    let projectID = e.path[2].id;
+    let projectID = path[2].id;
     const index = projects.findIndex((project) => project.id === projectID);
     projects.splice(index, 1);
 
@@ -85,7 +86,7 @@ nav.addEventListener('click', (e) => {
 
   if (target.id === 'cancel-project-btn') {
     hiddenElement(target.form);
-    if (e.path[3].classList.contains('rename-project-form')) {
+    if (path[3].classList.contains('rename-project-form')) {
       let currentTab = getCurrentTab();
       let text;
 
@@ -102,9 +103,10 @@ nav.addEventListener('click', (e) => {
 
 todoList.addEventListener('click', (e) => {
   const target = e.target;
+  let path = e.path || e.composedPath();
 
   if (target.classList.contains('item-check')) {
-    let taskID = e.path[1].id;
+    let taskID = path[1].id;
     const indices = indexOfTask(taskID);
     let completeStatus = projects[indices[0]].tasks[indices[1]].complete;
 
@@ -116,7 +118,7 @@ todoList.addEventListener('click', (e) => {
   }
 
   if (target.classList.contains('star')) {
-    let taskID = e.path[1].id;
+    let taskID = path[1].id;
     const indices = indexOfTask(taskID);
     let importantStatus = projects[indices[0]].tasks[indices[1]].important;
 
@@ -132,11 +134,11 @@ todoList.addEventListener('click', (e) => {
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
 
     const formValues = [];
-    let id = e.path[2].id;
-    let title = e.path[2].children[1].children[0].textContent;
-    let description = e.path[2].children[1].children[1].textContent;
-    let dueDate = e.path[2].children[2].textContent;
-    let task = e.path[6].querySelector(`[id='${id}']`);
+    let id = path[2].id;
+    let title = path[2].children[1].children[0].textContent;
+    let description = path[2].children[1].children[1].textContent;
+    let dueDate = path[2].children[2].textContent;
+    let task = path[6].querySelector(`[id='${id}']`);
 
     formValues.push(title);
     formValues.push(description);
@@ -151,7 +153,7 @@ todoList.addEventListener('click', (e) => {
     let currentTab = getCurrentTab();
     renderHomeLink(currentTab.children[1].textContent, currentTab.id);
 
-    let form = e.path[2].querySelector('.add-task-form');
+    let form = path[2].querySelector('.add-task-form');
 
     if (form.classList.contains('hidden')) {
       hiddenElement(form);
@@ -159,7 +161,7 @@ todoList.addEventListener('click', (e) => {
   }
 
   if (target.id === 'task-delete') {
-    let taskID = e.path[2].id;
+    let taskID = path[2].id;
     const indices = indexOfTask(taskID);
 
     projects[indices[0]].tasks.splice(indices[1], 1);
@@ -193,6 +195,7 @@ content.addEventListener('click', (e) => {
 content.addEventListener('submit', (e) => {
   e.preventDefault();
   const target = e.target;
+  let path = e.path || e.composedPath();
 
   if (target.classList.contains('add-project-form')) {
     createProject(target[0].value);
@@ -213,7 +216,7 @@ content.addEventListener('submit', (e) => {
   }
 
   if (target.classList.contains('add-task-form')) {
-    let projectID = e.path[1].id;
+    let projectID = path[1].id;
     const taskInfo = [
       target[0].value,
       target[1].value,
