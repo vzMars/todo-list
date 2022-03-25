@@ -2,13 +2,9 @@ import { createHeader } from './header';
 import { createNav } from './nav';
 import { createTodoList } from './todolist';
 
-// const content = document.getElementById('content');
-const header = document.querySelector('.header-section');
-const nav = document.querySelector('.nav-section');
+const header = document.querySelector('header');
+const nav = document.querySelector('nav');
 const todoList = document.querySelector('.todo-list-container');
-// console.log(header);
-// console.log(nav);
-// console.log(todoList);
 
 export const hiddenElement = (element) => {
   if (element.classList.contains('hidden')) {

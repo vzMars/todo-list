@@ -13,6 +13,7 @@
 
 html {
   box-sizing: border-box;
+  height: 100%;
 }
 
 *,
@@ -23,13 +24,16 @@ html {
 
 body {
   margin: 0;
+  padding: 0;
+  border: 0;
   font-family: 'Lexend', sans-serif;
   color: var(--textColor);
   background-color: var(--bgColor2);
+  height: 100%;
 }
 
-.header-section {
-  background-color: var(--bgColor1);
+header {
+  background-color: var(--bgColor3);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -103,7 +107,7 @@ body {
   list-style-type: none;
   border: solid 2px var(--bgColor3);
   margin-bottom: 1rem;
-  padding: 0 0.2rem;
+  padding: 0 0.2em;
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -166,8 +170,8 @@ body {
   color: #fec810;
 }
 
-.nav-section {
-  background-color: var(--bgColor3);
+nav {
+  background-color: #1a1c1dde;
   padding: 1.5em;
 }
 
@@ -225,10 +229,13 @@ body {
 }
 
 .home-link-img,
-.nav-icon,
-.add {
+.nav-icon {
   width: 1.8rem;
   margin-right: 1rem;
+}
+
+.add {
+  width: 1.8rem;
 }
 
 .add-project-form,
@@ -351,4 +358,79 @@ body {
 
 #task-duedate-input {
   margin-bottom: 0;
+}
+
+@media (min-width: 60em) {
+  .content {
+    display: grid;
+    grid-template-areas:
+      'header header'
+      'nav todolist';
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto 1fr;
+    min-height: 100%;
+  }
+
+  .hidden-nav {
+    grid-template-areas:
+      'header header'
+      'todolist todolist';
+  }
+
+  header {
+    grid-area: header;
+    font-size: 3rem;
+  }
+
+  nav {
+    grid-area: nav;
+  }
+
+  .todo-list-container {
+    grid-area: todolist;
+    padding: 2em;
+  }
+
+  .more-icon,
+  .menu-icon,
+  .star,
+  .add {
+    transform: scale(1.3);
+  }
+
+  .more-icon,
+  .star {
+    margin-left: 1rem;
+  }
+
+  #header-logo {
+    max-width: 3.5rem;
+  }
+
+  .item,
+  .add-task,
+  .home-links,
+  .project-links {
+    min-height: 7rem;
+    font-size: 1.5rem;
+  }
+
+  .item-check {
+    max-width: 1.5rem;
+    min-height: 1.5rem;
+  }
+
+  .item-description {
+    font-size: 1rem;
+  }
+
+  .item-date {
+    font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 70em) {
+  .content {
+    grid-template-columns: 1fr 3.5fr;
+  }
 }

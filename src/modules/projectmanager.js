@@ -14,9 +14,9 @@ import { v4 as uuidv4 } from 'uuid';
 const projects = [];
 const homeLinks = ['All Tasks', 'Today', 'Next 7 Days', 'Important'];
 
-const content = document.getElementById('content');
-const header = document.querySelector('.header-section');
-const nav = document.querySelector('.nav-section');
+const content = document.querySelector('.content');
+const header = document.querySelector('header');
+const nav = document.querySelector('nav');
 const todoList = document.querySelector('.todo-list-container');
 
 header.addEventListener('click', (e) => {
@@ -24,6 +24,7 @@ header.addEventListener('click', (e) => {
 
   if (target.classList.contains('menu-icon')) {
     hiddenElement(target.parentElement.nextElementSibling);
+    content.classList.toggle('hidden-nav');
   }
 });
 
@@ -258,7 +259,6 @@ const addProjectsToStorage = () => {
 
 const getProjectsFromStorage = () => {
   let tempProjects = JSON.parse(localStorage['myProjects']);
-  console.log(tempProjects);
   for (let i = 0; i < tempProjects.length; i++) {
     const tasks = tempProjects[i].tasks;
     createProject(tempProjects[i].title, tempProjects[i].id);
@@ -314,14 +314,12 @@ const sortTasks = (id) => {
 
 const createProject = (title, projectID) => {
   const id = createID(projectID);
-  console.log(id);
   const newProject = Project(id, title);
   projects.push(newProject);
 };
 
 const createTask = (taskInfo, projectID, taskID) => {
   const id = createID(taskID);
-  console.log(id);
   const newTask = Task(
     id,
     taskInfo[0],
@@ -445,7 +443,6 @@ const projectTasks = (projects, id) => {
 };
 
 const init = () => {
-  // createDefaultProject();
   checkStorage();
   renderPage(
     allTasks(projects),
