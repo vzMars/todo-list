@@ -139,7 +139,7 @@ header {
   text-decoration-line: line-through;
   -webkit-text-decoration-line: line-through;
   text-decoration-color: var(--accent);
-  -webkit-text-decoration-color: red;
+  -webkit-text-decoration-color: var(--accent);
 }
 
 .details-column {
