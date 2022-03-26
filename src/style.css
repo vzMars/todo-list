@@ -140,6 +140,7 @@ header {
   -webkit-text-decoration-line: line-through;
   text-decoration-color: var(--accent);
   -webkit-text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
 }
 
 .details-column {
