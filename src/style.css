@@ -113,6 +113,7 @@ header {
   align-items: center;
   justify-content: space-between;
   font-size: 1rem;
+  word-break: break-all;
 }
 
 .item-check {
@@ -135,12 +136,16 @@ header {
 }
 
 .text-true {
-  text-decoration: line-through var(--accent) 2px;
+  text-decoration-line: line-through;
+  -webkit-text-decoration-line: line-through;
+  text-decoration-color: var(--accent);
+  -webkit-text-decoration-color: red;
 }
 
 .details-column {
   flex: 1;
   min-width: 5rem;
+  padding: 0.5em;
 }
 
 .item-description {
